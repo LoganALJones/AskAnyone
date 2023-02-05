@@ -1,7 +1,9 @@
 type author {
   question: [question] @materializer(query: "getQuestion")
-  name: String
+  last_name: String
+  imageSrc: String
   id: ID!
+  first_name: String
   created_at: DateTime
   book: [book] @materializer(query: "getBook")
   birth_date: Date
@@ -52,7 +54,7 @@ type Query {
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "birth_date", "created_at", "id", "name" FROM "author" ORDER BY "id" LIMIT $1 OFFSET $2
+      SELECT "birth_date", "created_at", "first_name", "id", "imageSrc", "last_name" FROM "author" ORDER BY "id" LIMIT $1 OFFSET $2
       """
       configuration: "postgresql_config"
     )
@@ -61,7 +63,7 @@ type Query {
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "birth_date", "created_at", "id", "name" FROM "author" WHERE "id" = $1
+      SELECT "birth_date", "created_at", "first_name", "id", "imageSrc", "last_name" FROM "author" WHERE "id" = $1
       """
       configuration: "postgresql_config"
     )
@@ -70,7 +72,7 @@ type Query {
       type: "postgresql"
       schema: "public"
       query: """
-      SELECT "birth_date", "created_at", "id", "name" FROM "author" WHERE "id" = $1
+      SELECT "birth_date", "created_at", "first_name", "id", "imageSrc", "last_name" FROM "author" WHERE "id" = $1
       """
       configuration: "postgresql_config"
     )
@@ -158,7 +160,13 @@ type Mutation {
       dml: DELETE
       configuration: "postgresql_config"
     )
-  insertAuthor(birth_date: Date, name: String, created_at: DateTime): author
+  insertAuthor(
+    first_name: String
+    last_name: String
+    imageSrc: String
+    created_at: DateTime
+    birth_date: Date
+  ): author
     @dbquery(
       type: "postgresql"
       schema: "public"
@@ -170,7 +178,9 @@ type Mutation {
     id: ID!
     birth_date: Date
     created_at: DateTime
-    name: String
+    first_name: String
+    imageSrc: String
+    last_name: String
   ): author
     @dbquery(
       type: "postgresql"
@@ -179,7 +189,9 @@ type Mutation {
       UPDATE "author" SET
         "birth_date" = COALESCE($2, "birth_date"),
         "created_at" = COALESCE($3, "created_at"),
-        "name" = COALESCE($4, "name")
+        "first_name" = COALESCE($4, "first_name"),
+        "imageSrc" = COALESCE($5, "imageSrc"),
+        "last_name" = COALESCE($6, "last_name")
       WHERE
         "id" = $1
       RETURNING *
