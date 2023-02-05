@@ -1,8 +1,7 @@
 import "../styles/globals.css";
-import Banner from "./Banner";
 import Header from "./Header";
-import SearchBox from "./SearchBox";
 import { Providers } from './providers'
+import ThinkerList from "./ThinkerList";
 
 export default function RootLayout({
   children,
@@ -16,10 +15,7 @@ export default function RootLayout({
 
       <body className="bg-black-100">
         <Header />
-        <Banner />
-        <SearchBox />
-        <div
-        className="max-w-6xl mx -auto">
+        <div>
           <Providers>{children}</Providers></div>
       </body>
     </html>

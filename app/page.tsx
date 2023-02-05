@@ -1,11 +1,13 @@
+
+import Banner from "./Banner";
+import SearchBox from "./SearchBox";
+
 export default function HomePage() {
     return (
         // fetch the chat bot data (profile picture) 
-
-        
-    
         <div>
-            <h1 className="text-4xl"></h1>
+        <Banner />
+        <SearchBox />
         </div>
     );
-}
+} 
