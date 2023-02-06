@@ -7,12 +7,15 @@ import styled from 'styled-components'
 function Header() {
   return <header>
 <div className="relative flex grid grid-cols-4 p-10 h-8 items-center justify-start gap-5 shadow-md" style={{ display: "flex", justifyContent: "left" }}>
+    <Link href="/">
         <Image className="h-150 w-50 cursor-pointer"  
             src = "/AskAnyoneResized-removebg.png"
             width = {250}
             height = {170}
             alt = "AskAnyone"
-        />
+        ></Image>     
+    </Link>
+    
         <Link href="/" prefetch={false} className="flex items-center pl-5">
             <h1>Browse Bots</h1>s
         </Link>

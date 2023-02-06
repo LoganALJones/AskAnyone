@@ -15,7 +15,10 @@ type book {
   id: ID!
   created_at: DateTime
   author_id: ID
-  author: author @materializer(query: "getAuthor")
+  author: [author] @materializer(
+    query: "getAuthorlistById",
+    arguments: [{name:"id",field:"author_id"}]
+    )
 }
 
 type question {
@@ -42,6 +45,18 @@ type Query {
       table: "author"
       configuration: "postgresql_config"
     )
+
+    getAuthorlistById(id: ID!): [author]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT * FROM author WHERE id = $1
+
+      """
+      configuration: "postgresql_config"
+    )
+
   authorList: [author]
     @dbquery(
       type: "postgresql"
