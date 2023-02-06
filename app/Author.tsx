@@ -1,10 +1,10 @@
 import React from 'react'
-
-function Author() {
+type Props = {
+  author: Author
+}
+function Author({author}: Props) {
   return (
-    <div>
-        <Image> </Image>
-        
+    <div>        
 
     </div>
   )

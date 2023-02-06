@@ -1,0 +1,322 @@
+type author {
+  question: [question] @materializer(query: "getQuestion")
+  last_name: String
+  imageSrc: String
+  id: ID!
+  first_name: String
+  created_at: DateTime
+  book: [book] @materializer(query: "getBook")
+  birth_date: Date
+}
+
+type book {
+  title: String
+  publication_date_: Date
+  imageSrc: String
+  id: ID!
+  created_at: DateTime
+  author_id: ID
+  author: author @materializer(query: "getAuthor")
+}
+
+type question {
+  question: String
+  id: ID!
+  created_at: DateTime
+  context: String
+  author_id: ID
+  author: author @materializer(query: "getAuthorUsingQuestion_author_id_fkey")
+  ask_count: Int
+  answer: String
+}
+
+"""
+The following queries are just a set of examples of how to access your schema.
+Feel free to modify them or aggregate more.
+"""
+type Query {
+  " Queries for type 'author' "
+  author(id: ID!): author
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "author"
+      configuration: "postgresql_config"
+    )
+
+    getAuthorlistById(id: ID!): [author]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT * FROM author WHERE id = $1
+
+      """
+      configuration: "postgresql_config"
+    )
+
+  authorList: [author]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "author"
+      configuration: "postgresql_config"
+    )
+  authorPaginatedList(first: Int, after: Int): [author]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "birth_date", "created_at", "first_name", "id", "imageSrc", "last_name" FROM "author" ORDER BY "id" LIMIT $1 OFFSET $2
+      """
+      configuration: "postgresql_config"
+    )
+  getAuthor(author_id: ID!): author
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "birth_date", "created_at", "first_name", "id", "imageSrc", "last_name" FROM "author" WHERE "id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  getAuthorUsingQuestion_author_id_fkey(author_id: ID!): author
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "birth_date", "created_at", "first_name", "id", "imageSrc", "last_name" FROM "author" WHERE "id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  " Queries for type 'book' "
+  book(id: ID!): book
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "author_id", "created_at", "id", "imageSrc", "publication_date	" as "publication_date_", "title" FROM "book" WHERE "id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  bookList: [book]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "book"
+      configuration: "postgresql_config"
+    )
+     getBookListByAuthor(id: ID!): [book] 
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT * FROM book WHERE author_id = $1
+
+      """
+      configuration: "postgresql_config"
+    )
+
+  bookPaginatedList(first: Int, after: Int): [book]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "author_id", "created_at", "id", "imageSrc", "publication_date	" as "publication_date_", "title" FROM "book" ORDER BY "id" LIMIT $1 OFFSET $2
+      """
+      configuration: "postgresql_config"
+    )
+  getBook(id: ID!): [book]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "author_id", "created_at", "id", "imageSrc", "publication_date	" as "publication_date_", "title" FROM "book" WHERE "author_id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  " Queries for type 'question' "
+  getQuestion(id: ID!): [question]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "answer", "ask_count", "author_id", "context", "created_at", "id", "question" FROM "question" WHERE "author_id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+  question(id: ID!): question
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "question"
+      configuration: "postgresql_config"
+    )
+  questionList: [question]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "question"
+      configuration: "postgresql_config"
+    )
+  questionPaginatedList(first: Int, after: Int): [question]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT "answer", "ask_count", "author_id", "context", "created_at", "id", "question" FROM "question" ORDER BY "id" LIMIT $1 OFFSET $2
+      """
+      configuration: "postgresql_config"
+    )
+}
+
+"""
+The following mutations are just a set of examples of how to access your schema.
+Feel free to modify them or aggregate more.
+"""
+type Mutation {
+  " Mutations for type 'author' "
+  deleteAuthor(id: ID!): author
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "author"
+      dml: DELETE
+      configuration: "postgresql_config"
+    )
+  insertAuthor(
+    first_name: String
+    last_name: String
+    imageSrc: String
+    created_at: DateTime
+    birth_date: Date
+  ): author
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "author"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+  updateAuthor(
+    id: ID!
+    birth_date: Date
+    created_at: DateTime
+    first_name: String
+    imageSrc: String
+    last_name: String
+  ): author
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      UPDATE "author" SET
+        "birth_date" = COALESCE($2, "birth_date"),
+        "created_at" = COALESCE($3, "created_at"),
+        "first_name" = COALESCE($4, "first_name"),
+        "imageSrc" = COALESCE($5, "imageSrc"),
+        "last_name" = COALESCE($6, "last_name")
+      WHERE
+        "id" = $1
+      RETURNING *
+      """
+      configuration: "postgresql_config"
+    )
+  " Mutations for type 'book' "
+  deleteBook(id: ID!): book
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "book"
+      dml: DELETE
+      configuration: "postgresql_config"
+    )
+  insertBook(
+    publication_date_: Date
+    imageSrc: String
+    created_at: DateTime
+    author_id: ID
+    title: String
+  ): book
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "book"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+  updateBook(
+    id: ID!
+    author_id: ID
+    created_at: DateTime
+    imageSrc: String
+    publication_date_: Date
+    title: String
+  ): book
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      UPDATE "book" SET
+        "author_id" = COALESCE($2, "author_id"),
+        "created_at" = COALESCE($3, "created_at"),
+        "imageSrc" = COALESCE($4, "imageSrc"),
+        "publication_date	" = COALESCE($5, "publication_date	"),
+        "title" = COALESCE($6, "title")
+      WHERE
+        "id" = $1
+      RETURNING *
+      """
+      configuration: "postgresql_config"
+    )
+  " Mutations for type 'question' "
+  deleteQuestion(id: ID!): question
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "question"
+      dml: DELETE
+      configuration: "postgresql_config"
+    )
+  insertQuestion(
+    question: String
+    answer: String
+    created_at: DateTime
+    author_id: ID
+    ask_count: Int
+    context: String
+  ): question
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      table: "question"
+      dml: INSERT
+      configuration: "postgresql_config"
+    )
+  updateQuestion(
+    id: ID!
+    answer: String
+    ask_count: Int
+    author_id: ID
+    context: String
+    created_at: DateTime
+    question: String
+  ): question
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      UPDATE "question" SET
+        "answer" = COALESCE($2, "answer"),
+        "ask_count" = COALESCE($3, "ask_count"),
+        "author_id" = COALESCE($4, "author_id"),
+        "context" = COALESCE($5, "context"),
+        "created_at" = COALESCE($6, "created_at"),
+        "question" = COALESCE($7, "question")
+      WHERE
+        "id" = $1
+      RETURNING *
+      """
+      configuration: "postgresql_config"
+    )
+}
