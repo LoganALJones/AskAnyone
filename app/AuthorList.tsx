@@ -1,10 +1,10 @@
 import React from 'react'
 
 type Props = { 
-    thinkers: Thinkers[];
+    Authors: Authors[];
 };
 
-function ThinkerList({thinkers}: Props) {
+function AuthorList({Authors}: Props) {
     return (
         <main>
 
@@ -13,4 +13,4 @@ function ThinkerList({thinkers}: Props) {
     )
 }
 
-export default ThinkerList
+export default AuthorList

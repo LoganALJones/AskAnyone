@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 import Header from "./Header";
 import { Providers } from './providers'
-import ThinkerList from "./ThinkerList";
+import AuthorList from "./AuthorList";
 
 export default function RootLayout({
   children,

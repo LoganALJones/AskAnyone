@@ -93,6 +93,19 @@ type Query {
       table: "book"
       configuration: "postgresql_config"
     )
+
+    getBookListByAuthor(id: ID!): [book] 
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      SELECT * FROM book WHERE author_id = $1
+
+      """
+      configuration: "postgresql_config"
+    )
+
+
   bookPaginatedList(first: Int, after: Int): [book]
     @dbquery(
       type: "postgresql"
@@ -164,8 +177,6 @@ type Mutation {
     first_name: String
     last_name: String
     imageSrc: String
-    created_at: DateTime
-    birth_date: Date
   ): author
     @dbquery(
       type: "postgresql"
