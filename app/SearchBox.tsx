@@ -22,7 +22,7 @@ function SearchBox() {
     value={input} 
     onChange={(e) => setInput(e.target.value)}
     className="mx-2 w-full h-10 rounded-sm flex-1 placeholder-gray-500 text-purple-900 outline-none " 
-    placeholder="Search Authors..." />
+    placeholder="What is the meaning of life..." />
 
     <button type="submit"
     disabled={!input}
