@@ -17,7 +17,7 @@ pinecone.init(api_key=os.environ["PINECONE_API_KEY"], environment="us-east1-gcp"
 # Replace with your Pinecone API key
 
 # Set the endpoint URL
-url = "testing-f299968.svc.us-east1-gcp.pinecone.io"
+url = "testing2-f299968.svc.us-east1-gcp.pinecone.io"
 
 MODEL = "text-embedding-ada-002"
 
@@ -45,6 +45,7 @@ vector = []
 # jsonFilePath = 'data.json'
 # csv_embeddings_to_json("book.pdf.embeddings.csv", jsonFilePath)
 
+index = pinecone.Index('testing2')
 
 def chunks(iterable, batch_size=100):
     """A helper function to break an iterable into chunks of size batch_size."""
@@ -54,15 +55,17 @@ def chunks(iterable, batch_size=100):
         yield chunk
         chunk = tuple(itertools.islice(it, batch_size))
 
-vector_dim = 4096 # Dimension of each vector
-vector_count = 10000
+# Load the JSON data
+with open('data.json') as f:
+    data = json.load(f)
 
-# Example generator that generates many (id, vector) pairs
-example_data_generator = map(lambda i: (f'id-{i}', [random.random() for _ in range(vector_dim)]), range(vector_count))
+# Get the list of vectors from the JSON data
+vectors = [(vector['id'], vector['values']) for vector in data['vectors']]
 
 # Upsert data with 100 vectors per upsert request
-for ids_vectors_chunk in chunks(example_data_generator, batch_size=100):
-    index.upsert(vectors=ids_vectors_chunk)  # Assuming `index` defined elsewhere# def csv_to_vectors(csvf_name):
+for ids_vectors_chunk in chunks(vectors, batch_size=100):
+    index.upsert(vectors=ids_vectors_chunk)  # Assuming `index` defined elsewhere
+
 
 
 
@@ -104,7 +107,7 @@ for ids_vectors_chunk in chunks(example_data_generator, batch_size=100):
 
 # vector = np.zeros(1024)
 
-# index = pinecone.Index('testing')
+# index = pinecone.Index('testing2')
 
 # index.upsert(vectors=zip(['a'], [5]))
 
