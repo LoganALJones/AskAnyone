@@ -6,6 +6,8 @@ import itertools
 import pinecone
 import numpy as np
 import json 
+import pandas as pd
+
 
 # import environment variables
 dotenv.load_dotenv()
@@ -20,6 +22,15 @@ pinecone.init(api_key=os.environ["PINECONE_API_KEY"], environment="us-east1-gcp"
 url = "testing2-f299968.svc.us-east1-gcp.pinecone.io"
 
 MODEL = "text-embedding-ada-002"
+res = openai.Embedding.create(
+    input = [
+
+        "What's the meaning of life?"
+    ], engine=MODEL 
+)
+res
+
+
 
 batch_size = 1000
 def chunks(iterable, batch_size):
@@ -29,6 +40,28 @@ def chunks(iterable, batch_size):
 
 page_number = []
 vector = []
+
+import csv
+
+import pandas as pd
+
+def join_csvs(file1, file2, joined_file):
+    df1 = pd.read_csv(file1, float_precision='round_trip')
+    df2 = pd.read_csv(file2, float_precision='round_trip')
+    
+    df1 = df1.rename(columns={'title': 'page'})
+    df2 = df2.rename(columns={'title': 'page'})
+    
+    joined_df = pd.merge(df1, df2, on='page')
+    joined_df.to_csv(joined_file, float_format="%.34f")
+
+join_csvs('book.pdf.pages.csv', 'book.pdf.embeddings.csv', 'joined.csv')
+
+
+
+
+
+
 
 
 # def csv_embeddings_to_json(csvf_name, jsonFilePath):
@@ -47,26 +80,37 @@ vector = []
 
 index = pinecone.Index('testing2')
 
-def chunks(iterable, batch_size=100):
-    """A helper function to break an iterable into chunks of size batch_size."""
-    it = iter(iterable)
-    chunk = tuple(itertools.islice(it, batch_size))
-    while chunk:
-        yield chunk
-        chunk = tuple(itertools.islice(it, batch_size))
+index.describe_index_stats
 
-# Load the JSON data
-with open('data.json') as f:
-    data = json.load(f)
+# TODO: Put this code into a function.
+# def chunks(iterable, batch_size=100):
+#     """A helper function to break an iterable into chunks of size batch_size."""
+#     it = iter(iterable)
+#     chunk = tuple(itertools.islice(it, batch_size))
+#     while chunk:
+#         yield chunk
+#         chunk = tuple(itertools.islice(it, batch_size))
 
-# Get the list of vectors from the JSON data
-vectors = [(vector['id'], vector['values']) for vector in data['vectors']]
+# # Load the JSON data
+# with open('data.json') as f:
+#     data = json.load(f)
 
-# Upsert data with 100 vectors per upsert request
-for ids_vectors_chunk in chunks(vectors, batch_size=100):
-    index.upsert(vectors=ids_vectors_chunk)  # Assuming `index` defined elsewhere
+# # Get the list of vectors from the JSON data
+# vectors = [(vector['id'], vector['values']) for vector in data['vectors']]
+
+# # Upsert data with 100 vectors per upsert request
+# for ids_vectors_chunk in chunks(vectors, batch_size=100):
+#     index.upsert(vectors=ids_vectors_chunk)  # Assuming `index` defined elsewhere
 
 
+
+
+
+
+
+
+#TODO: Learn to query the vector database
+#TODO: Implement two functinons (convert the csv into the vector json format ) (attempt to upload on pinecone to see the vector dimensions) AND chunk upload the vectors into the database)
 
 
 
@@ -100,7 +144,6 @@ for ids_vectors_chunk in chunks(vectors, batch_size=100):
 # #     print("Page number: {}, Content: {}".format(page_number[i], vector[i]))
 
 # # Longterm, he couldn't do it.
-# # TODO: Upload vectors into pinecone (in batches using the youTuvbe video).
 # # https://www.youtube.com/watch?v=HjeW6ed2dmI
 
 # # Connect to pinecone Index 
@@ -110,4 +153,8 @@ for ids_vectors_chunk in chunks(vectors, batch_size=100):
 # index = pinecone.Index('testing2')
 
 # index.upsert(vectors=zip(['a'], [5]))
+
+
+
+
 
