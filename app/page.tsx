@@ -1,15 +1,15 @@
-
 import AuthorPage from "./AuthorPage";
 import Banner from "./Banner";
 import SearchBox from "./SearchBox";
+import DropResume from "./DropResume";
 
 export default function HomePage() {
-    return (
-        // fetch the chat bot data (profile picture) 
-        <div>
-        <Banner />
-        <SearchBox />
-        <AuthorPage/>
-        </div>
-    );
-} 
+  return (
+    <div>
+      <Banner />
+      <SearchBox />
+      <AuthorPage />
+      <DropResume message="Drop your resume here" />
+    </div>
+  );
+}
